@@ -6,6 +6,7 @@ import Image from "next/image";
 import Link from 'next/link';
 import { translations } from '@/translations';
 import FloatingGroupButton from '@/components/FloatingGroupButton';
+import { useLocalStorage } from '@/hooks/useLocalStorage';
 
 type Country = {
   code: string;
@@ -101,10 +102,7 @@ export default function Home() {
     return () => clearInterval(timer);
   }, []);
 
-  const [showWhatsAppForm, setShowWhatsAppForm] = useState(() => {
-    const savedWhatsApp = localStorage.getItem('whatsappAccess');
-    return !savedWhatsApp;
-  });
+  const [showWhatsAppForm, setShowWhatsAppForm] = useLocalStorage('showWhatsAppForm', true);
   const [whatsappNumber, setWhatsappNumber] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
@@ -146,12 +144,6 @@ export default function Home() {
       if (!response.ok) {
         throw new Error('Erro ao salvar WhatsApp');
       }
-
-      localStorage.setItem('whatsappAccess', JSON.stringify({
-        phone: whatsappNumber,
-        countryCode: selectedCountry.dialCode,
-        timestamp: new Date().toISOString()
-      }));
 
       setShowWhatsAppForm(false);
     } catch (error) {
