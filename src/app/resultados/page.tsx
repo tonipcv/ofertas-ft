@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { 
-  BarChart3, 
+  BarChart3 as BarChart,
   PieChart,
   Search,
   Calendar,
@@ -16,6 +16,7 @@ import {
 import Image from 'next/image';
 import Link from 'next/link';
 import { translations } from '@/translations';
+import FloatingGroupButton from '@/components/FloatingGroupButton';
 
 // Interface para o tipo Trade
 interface Trade {
@@ -54,6 +55,12 @@ export default function Home() {
   const [result, setResult] = useState<number | null>(null);
   const [language, setLanguage] = useState<'pt' | 'en'>('pt');
   const t = translations[language];
+  const [timeLeft, setTimeLeft] = useState({
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0
+  });
 
   useEffect(() => {
     async function getTrades() {
@@ -85,6 +92,27 @@ export default function Home() {
     }
 
     getTrades();
+  }, []);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      const now = new Date();
+      
+      // Define a data alvo: 05/02/2025 19:00 GMT-3
+      const targetDate = new Date('2025-02-05T22:00:00.000Z'); // 19:00 BRT = 22:00 UTC
+      const difference = targetDate.getTime() - now.getTime();
+      
+      if (difference > 0) {
+        setTimeLeft({
+          days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+          hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+          minutes: Math.floor((difference / 1000 / 60) % 60),
+          seconds: Math.floor((difference / 1000) % 60)
+        });
+      }
+    }, 1000);
+
+    return () => clearInterval(timer);
   }, []);
 
   const months = [
@@ -432,45 +460,50 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-black text-gray-200">
-      {/* Header com Logo */}
-      <header className="py-8 px-4">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <Link href="/" className="inline-block">
-            <Image
-              src="/logo.jpg"
-              alt="Futuros Tech"
-              width={80}
-              height={80}
-              className="rounded"
-            />
-          </Link>
-          
-          <a
-            href="https://ai.futurostech.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-xs text-neutral-400 hover:text-white transition-colors flex items-center gap-2"
-          >
-            Área VIP
-            <ChevronRight className="h-3 w-3" />
-          </a>
+      {/* Countdown Section */}
+      <section className="py-8 px-4 bg-black/50 backdrop-blur-sm border-b border-green-500/20">
+        <div className="max-w-4xl mx-auto text-center">
+          <h3 className="text-sm text-green-400 mb-4 uppercase tracking-wider font-medium">
+            {language === 'pt' 
+              ? 'Liberação do Desconto + 1 Ano de Acesso ao Futuros Tech em:' 
+              : 'Discount Release + 1 Year Access to Futuros Tech in:'}
+          </h3>
+          <div className="flex flex-wrap justify-center gap-2 md:gap-4 text-white mb-8">
+            <div className="bg-green-500/5 border border-green-500/20 backdrop-blur-sm px-3 py-2 md:px-6 md:py-3 rounded-lg">
+              <div className="text-xl md:text-3xl font-light text-green-400">{timeLeft.days}</div>
+              <div className="text-[10px] md:text-xs text-neutral-400">{language === 'pt' ? 'Dias' : 'Days'}</div>
+            </div>
+            <div className="bg-green-500/5 border border-green-500/20 backdrop-blur-sm px-3 py-2 md:px-6 md:py-3 rounded-lg">
+              <div className="text-xl md:text-3xl font-light text-green-400">{timeLeft.hours}</div>
+              <div className="text-[10px] md:text-xs text-neutral-400">{language === 'pt' ? 'Horas' : 'Hours'}</div>
+            </div>
+            <div className="bg-green-500/5 border border-green-500/20 backdrop-blur-sm px-3 py-2 md:px-6 md:py-3 rounded-lg">
+              <div className="text-xl md:text-3xl font-light text-green-400">{timeLeft.minutes}</div>
+              <div className="text-[10px] md:text-xs text-neutral-400">{language === 'pt' ? 'Minutos' : 'Minutes'}</div>
+            </div>
+            <div className="bg-green-500/5 border border-green-500/20 backdrop-blur-sm px-3 py-2 md:px-6 md:py-3 rounded-lg">
+              <div className="text-xl md:text-3xl font-light text-green-400">{timeLeft.seconds}</div>
+              <div className="text-[10px] md:text-xs text-neutral-400">{language === 'pt' ? 'Segundos' : 'Seconds'}</div>
+            </div>
+          </div>
+
+          {/* Botão Ver Aula Completa */}
+          <div className="mt-8">
+            <Link 
+              href="/" 
+              className="inline-flex items-center gap-2 border border-neutral-800 text-neutral-300 px-6 py-2 text-xs hover:bg-white/5 transition-colors"
+            >
+              <BarChart className="h-4 w-4" />
+              {language === 'pt' ? 'Ver Aula Completa' : 'Watch Full Class'}
+            </Link>
+          </div>
         </div>
-      </header>
+      </section>
 
       <main className="pb-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
-          {/* Botão Assinar */}
-          <div className="flex justify-center mb-12">
-            <Link 
-              href="/#planos"
-              className="bg-white/10 backdrop-blur-sm text-white px-8 py-2 rounded-full text-sm hover:bg-white/20 transition"
-            >
-              Assine Agora
-            </Link>
-          </div>
-
           {/* Filtros */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-6 md:mb-8">
             <div>
               <label className="block text-xs text-gray-400 mb-2">Pesquisar Ativo</label>
               <input
@@ -538,7 +571,7 @@ export default function Home() {
 
             <div className="bg-gray-900/50 border border-gray-800 rounded-lg p-4">
               <div className="flex items-center gap-2 mb-1">
-                <BarChart3 className="h-4 w-4 text-green-400" strokeWidth={1.5} />
+                <BarChart className="h-4 w-4 text-green-400" strokeWidth={1.5} />
                 <span className="text-sm text-gray-400">Total de Sinais</span>
               </div>
               <div className="flex items-baseline gap-2">
@@ -549,9 +582,9 @@ export default function Home() {
           </div>
 
           {/* Tabela responsiva */}
-          <div className="overflow-x-auto">
-            <div className="inline-block min-w-full align-middle">
-              <table className="min-w-full divide-y divide-gray-800">
+          <div className="overflow-x-auto -mx-4 md:mx-0">
+            <div className="inline-block min-w-full align-middle px-4 md:px-0">
+              <table className="min-w-full divide-y divide-gray-800 text-sm">
                 <thead>
                   <tr>
                     <th scope="col" className="py-3 text-left text-xs font-medium text-gray-400">Data</th>
@@ -593,6 +626,19 @@ export default function Home() {
               </table>
             </div>
           </div>
+
+          {/* Botão Grupo Premium */}
+          <div className="text-center mt-8">
+            <Link 
+              href="https://t.me/+mZs1t5_biYFmMTBh"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 border border-neutral-800 text-neutral-300 px-6 py-2 text-xs hover:bg-white/5 transition-colors"
+            >
+              <BarChart className="h-4 w-4" />
+              {language === 'pt' ? 'Grupo Premium' : 'Premium Group'}
+            </Link>
+          </div>
         </div>
       </main>
 
@@ -606,6 +652,8 @@ export default function Home() {
           {language.toUpperCase()}
         </button>
       </div>
+
+      <FloatingGroupButton />
     </div>
   );
 }
