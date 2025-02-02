@@ -544,16 +544,22 @@ export default function Home() {
 
       {/* WhatsApp Overlay */}
       {showWhatsAppForm && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4 pointer-events-auto">
+        <div className="fixed inset-0 bg-black/90 backdrop-blur-sm flex items-center justify-center z-50 p-4 pointer-events-auto">
           <div 
             className="absolute inset-0" 
             onClick={(e) => e.target === e.currentTarget && setShowWhatsAppForm(true)}
           />
-          <div className="bg-neutral-900 border border-neutral-800 rounded-lg p-6 md:p-8 w-full max-w-md relative">
+          <div className="bg-black border border-neutral-800 rounded-lg p-6 md:p-8 w-full max-w-md relative">
             <div className="text-center">
-              <h2 className="text-2xl font-light mb-2 bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">
-                {language === 'pt' ? 'Acesso Exclusivo' : 'Exclusive Access'}
-              </h2>
+              {/* Logo */}
+              <Image
+                src="/fip.jpg"
+                alt="FIP"
+                width={80}
+                height={80}
+                className="mx-auto mb-6 rounded"
+              />
+
               <p className="text-sm text-neutral-400 mb-8">
                 {language === 'pt' 
                   ? 'Adicione seu WhatsApp para Liberar o seu Acesso ao Relatório:'
