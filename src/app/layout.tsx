@@ -73,5 +73,9 @@ export default function RootLayout({
         <meta name="theme-color" content="#000000" />
         <MetaPixel />
       </head>
-      <body
-        className={`
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        {children}
+      </body>
+    </html>
+  );
+}
