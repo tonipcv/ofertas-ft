@@ -12,4 +12,12 @@ model WhatsappLead {
   phone       String
   countryCode String
   createdAt   DateTime @default(now())
+}
+
+model WhatsappFrio {
+  id          Int      @id @default(autoincrement())
+  phone       String
+  countryCode String
+  createdAt   DateTime @default(now())
+  isGroupMember Boolean @default(false)
 } 

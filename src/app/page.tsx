@@ -18,7 +18,7 @@ type Country = {
 
 export default function Home() {
   const [activeQuestion, setActiveQuestion] = useState<number | null>(null);
-  const [selectedMonth, setSelectedMonth] = useState<number>(12);
+  const [selectedMonth, setSelectedMonth] = useState<number>(1);
   const [language, setLanguage] = useState<'pt' | 'en'>('pt');
   const t = translations[language];
   const [timeLeft, setTimeLeft] = useState({
@@ -33,7 +33,8 @@ export default function Home() {
     { number: 9, name: 'Setembro' },
     { number: 10, name: 'Outubro' },
     { number: 11, name: 'Novembro' },
-    { number: 12, name: 'Dezembro' }
+    { number: 12, name: 'Dezembro' },
+    { number: 1, name: 'Janeiro' }
   ];
 
   const monthlyResults = {
@@ -41,7 +42,8 @@ export default function Home() {
     9: { winRate: "85.0", wins: "68/80", total: "13.254" },
     10: { winRate: "87.0", wins: "95/109", total: "14.122" },
     11: { winRate: "88.0", wins: "88/100", total: "15.345" },
-    12: { winRate: "89.0", wins: "137/154", total: "11.917" }
+    12: { winRate: "89.0", wins: "137/154", total: "11.917" },
+    1: { winRate: "90.4", wins: "151/167", total: "13.134" }
   };
 
   const currentResults = monthlyResults[selectedMonth as keyof typeof monthlyResults];
@@ -121,7 +123,46 @@ export default function Home() {
     { code: 'PT', name: 'Portugal', flag: '🇵🇹', dialCode: '351' },
     { code: 'US', name: 'United States', flag: '🇺🇸', dialCode: '1' },
     { code: 'ES', name: 'España', flag: '🇪🇸', dialCode: '34' },
-  ];
+    { code: 'AR', name: 'Argentina', flag: '🇦🇷', dialCode: '54' },
+    { code: 'AU', name: 'Australia', flag: '🇦🇺', dialCode: '61' },
+    { code: 'BE', name: 'Belgium', flag: '🇧🇪', dialCode: '32' },
+    { code: 'CA', name: 'Canada', flag: '🇨🇦', dialCode: '1' },
+    { code: 'CL', name: 'Chile', flag: '🇨🇱', dialCode: '56' },
+    { code: 'CN', name: 'China', flag: '🇨🇳', dialCode: '86' },
+    { code: 'CO', name: 'Colombia', flag: '🇨🇴', dialCode: '57' },
+    { code: 'DK', name: 'Denmark', flag: '🇩🇰', dialCode: '45' },
+    { code: 'FR', name: 'France', flag: '🇫🇷', dialCode: '33' },
+    { code: 'DE', name: 'Germany', flag: '🇩🇪', dialCode: '49' },
+    { code: 'HK', name: 'Hong Kong', flag: '🇭🇰', dialCode: '852' },
+    { code: 'IN', name: 'India', flag: '🇮🇳', dialCode: '91' },
+    { code: 'ID', name: 'Indonesia', flag: '🇮🇩', dialCode: '62' },
+    { code: 'IE', name: 'Ireland', flag: '��🇪', dialCode: '353' },
+    { code: 'IL', name: 'Israel', flag: '🇮🇱', dialCode: '972' },
+    { code: 'IT', name: 'Italy', flag: '🇮🇹', dialCode: '39' },
+    { code: 'JP', name: 'Japan', flag: '🇯🇵', dialCode: '81' },
+    { code: 'MY', name: 'Malaysia', flag: '🇲🇾', dialCode: '60' },
+    { code: 'MX', name: 'Mexico', flag: '🇲🇽', dialCode: '52' },
+    { code: 'NL', name: 'Netherlands', flag: '🇳🇱', dialCode: '31' },
+    { code: 'NZ', name: 'New Zealand', flag: '🇳🇿', dialCode: '64' },
+    { code: 'NO', name: 'Norway', flag: '🇳🇴', dialCode: '47' },
+    { code: 'PE', name: 'Peru', flag: '🇵🇪', dialCode: '51' },
+    { code: 'PH', name: 'Philippines', flag: '🇵🇭', dialCode: '63' },
+    { code: 'PL', name: 'Poland', flag: '🇵🇱', dialCode: '48' },
+    { code: 'RU', name: 'Russia', flag: '🇷🇺', dialCode: '7' },
+    { code: 'SG', name: 'Singapore', flag: '🇸🇬', dialCode: '65' },
+    { code: 'ZA', name: 'South Africa', flag: '🇿🇦', dialCode: '27' },
+    { code: 'KR', name: 'South Korea', flag: '🇰🇷', dialCode: '82' },
+    { code: 'SE', name: 'Sweden', flag: '🇸🇪', dialCode: '46' },
+    { code: 'CH', name: 'Switzerland', flag: '🇨🇭', dialCode: '41' },
+    { code: 'TW', name: 'Taiwan', flag: '🇹🇼', dialCode: '886' },
+    { code: 'TH', name: 'Thailand', flag: '🇹🇭', dialCode: '66' },
+    { code: 'TR', name: 'Turkey', flag: '🇹🇷', dialCode: '90' },
+    { code: 'AE', name: 'UAE', flag: '🇦🇪', dialCode: '971' },
+    { code: 'GB', name: 'United Kingdom', flag: '🇬🇧', dialCode: '44' },
+    { code: 'UY', name: 'Uruguay', flag: '🇺🇾', dialCode: '598' },
+    { code: 'VE', name: 'Venezuela', flag: '🇻🇪', dialCode: '58' },
+    { code: 'VN', name: 'Vietnam', flag: '🇻��', dialCode: '84' }
+  ].sort((a, b) => a.name.localeCompare(b.name));
 
   const handleWhatsAppSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
