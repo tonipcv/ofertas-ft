@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import MetaPixel from '@/components/MetaPixel'
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -70,12 +71,7 @@ export default function RootLayout({
         <link rel="canonical" href="https://futurostech.com" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="theme-color" content="#000000" />
+        <MetaPixel />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
-      </body>
-    </html>
-  );
-}
+        className={`

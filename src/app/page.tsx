@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { translations } from '@/translations';
 import FloatingGroupButton from '@/components/FloatingGroupButton';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
+import { trackFacebookEvent } from '@/lib/facebook';
 
 type Country = {
   code: string;
@@ -144,6 +145,12 @@ export default function Home() {
       if (!response.ok) {
         throw new Error('Erro ao salvar WhatsApp');
       }
+
+      // Track WhatsApp submission
+      trackFacebookEvent('Lead', {
+        content_category: 'WhatsApp',
+        content_name: 'WhatsApp Form Submission'
+      });
 
       setShowWhatsAppForm(false);
     } catch (error) {

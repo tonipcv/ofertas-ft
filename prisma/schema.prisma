@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = "postgres://postgres:62fbd9b6a4aa33815ed1@dpbdp1.easypanel.host:32132/futurostechnotification?sslmode=disable"
+  url      = env("DATABASE_URL")
 }
 
 model WhatsappLead {
