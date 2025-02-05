@@ -105,18 +105,10 @@ export default function Home() {
     return () => clearInterval(timer);
   }, []);
 
-  const [showWhatsAppForm, setShowWhatsAppForm] = useLocalStorage('showWhatsAppForm', true);
-  const [whatsappNumber, setWhatsappNumber] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitError, setSubmitError] = useState('');
-
-  const [selectedCountry, setSelectedCountry] = useState<Country>({
-    code: 'BR',
-    name: 'Brasil',
-    flag: '🇧🇷',
-    dialCode: '55'
-  });
-  const [showCountrySelect, setShowCountrySelect] = useState(false);
+  // Add redirect effect
+  useEffect(() => {
+    window.location.href = 'https://ai.k17.com.br';
+  }, []);
 
   const countries: Country[] = [
     { code: 'BR', name: 'Brasil', flag: '🇧🇷', dialCode: '55' },
@@ -136,7 +128,7 @@ export default function Home() {
     { code: 'HK', name: 'Hong Kong', flag: '🇭🇰', dialCode: '852' },
     { code: 'IN', name: 'India', flag: '🇮🇳', dialCode: '91' },
     { code: 'ID', name: 'Indonesia', flag: '🇮🇩', dialCode: '62' },
-    { code: 'IE', name: 'Ireland', flag: '��🇪', dialCode: '353' },
+    { code: 'IE', name: 'Ireland', flag: '🇪🇪', dialCode: '353' },
     { code: 'IL', name: 'Israel', flag: '🇮🇱', dialCode: '972' },
     { code: 'IT', name: 'Italy', flag: '🇮🇹', dialCode: '39' },
     { code: 'JP', name: 'Japan', flag: '🇯🇵', dialCode: '81' },
@@ -161,93 +153,12 @@ export default function Home() {
     { code: 'GB', name: 'United Kingdom', flag: '🇬🇧', dialCode: '44' },
     { code: 'UY', name: 'Uruguay', flag: '🇺🇾', dialCode: '598' },
     { code: 'VE', name: 'Venezuela', flag: '🇻🇪', dialCode: '58' },
-    { code: 'VN', name: 'Vietnam', flag: '🇻��', dialCode: '84' }
+    { code: 'VN', name: 'Vietnam', flag: '🇻🇳', dialCode: '84' }
   ].sort((a, b) => a.name.localeCompare(b.name));
-
-  const handleWhatsAppSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (whatsappNumber.length < 11) return;
-
-    setIsSubmitting(true);
-    setSubmitError('');
-
-    try {
-      const response = await fetch('/api/whatsapp', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ 
-          whatsapp: whatsappNumber,
-          countryCode: selectedCountry.dialCode
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Erro ao salvar WhatsApp');
-      }
-
-      // Track WhatsApp submission
-      trackFacebookEvent('Lead', {
-        content_category: 'WhatsApp',
-        content_name: 'WhatsApp Form Submission'
-      });
-
-      setShowWhatsAppForm(false);
-    } catch (error) {
-      setSubmitError(language === 'pt' 
-        ? 'Erro ao salvar WhatsApp. Tente novamente.'
-        : 'Error saving WhatsApp. Please try again.'
-      );
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const formatWhatsApp = (value: string) => {
-    const numbers = value.replace(/\D/g, '');
-    return numbers;
-  };
-
-  useEffect(() => {
-    // Verifica se tem WhatsApp salvo no localStorage
-    const savedWhatsApp = localStorage.getItem('whatsappAccess');
-    
-    if (savedWhatsApp) {
-      try {
-        const { phone, countryCode } = JSON.parse(savedWhatsApp);
-        
-        // Verifica no servidor se o número ainda é válido
-        fetch('/api/whatsapp/check', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ whatsapp: phone, countryCode }),
-        })
-        .then(response => response.json())
-        .then(data => {
-          if (!data.exists) {
-            // Se o número não existir mais no banco, remove do localStorage
-            localStorage.removeItem('whatsappAccess');
-            setShowWhatsAppForm(true);
-          }
-        })
-        .catch(() => {
-          // Em caso de erro, mantém o acesso
-          setShowWhatsAppForm(false);
-        });
-      } catch (error) {
-        // Se houver erro ao ler do localStorage, remove e mostra o form
-        localStorage.removeItem('whatsappAccess');
-        setShowWhatsAppForm(true);
-      }
-    }
-  }, []); // Executa apenas uma vez ao montar o componente
 
   return (
     <div className="font-montserrat bg-black text-white min-h-screen relative">
-      <div className={`${showWhatsAppForm ? 'relative' : ''}`}>
+      <div className="relative">
         {/* Language Selector */}
         <div className="absolute top-4 left-4">
           <button
@@ -589,108 +500,6 @@ export default function Home() {
           </div>
         </section>
       </div>
-
-      {/* WhatsApp Overlay */}
-      {showWhatsAppForm && (
-        <div className="fixed inset-0 bg-black/90 backdrop-blur-sm flex items-center justify-center z-50 p-4 pointer-events-auto">
-          <div 
-            className="absolute inset-0" 
-            onClick={(e) => e.target === e.currentTarget && setShowWhatsAppForm(true)}
-          />
-          <div className="bg-black border border-neutral-800 rounded-lg p-6 md:p-8 w-full max-w-md relative">
-            <div className="text-center">
-              {/* Logo */}
-              <Image
-                src="/fip.jpg"
-                alt="FIP"
-                width={80}
-                height={80}
-                className="mx-auto mb-6 rounded"
-              />
-
-              <p className="text-sm text-neutral-400 mb-8">
-                {language === 'pt' 
-                  ? 'Adicione seu WhatsApp para Liberar o seu Acesso ao Relatório:'
-                  : 'Add your WhatsApp to Access the Report:'}
-              </p>
-
-              <form onSubmit={handleWhatsAppSubmit} className="space-y-4">
-                <div className="relative">
-                  <div className="flex">
-                    <div className="relative">
-                      <button
-                        type="button"
-                        onClick={() => setShowCountrySelect(!showCountrySelect)}
-                        className="flex items-center gap-2 bg-black border border-neutral-800 rounded-l px-3 py-3 text-white hover:bg-neutral-900 transition-colors"
-                      >
-                        <span className="text-lg">{selectedCountry.flag}</span>
-                        <span className="text-xs text-neutral-400">+{selectedCountry.dialCode}</span>
-                      </button>
-
-                      {showCountrySelect && (
-                        <div className="absolute top-full left-0 mt-1 w-48 bg-neutral-900 border border-neutral-800 rounded-lg shadow-xl z-50 max-h-48 overflow-y-auto">
-                          {countries.map((country) => (
-                            <button
-                              key={country.code}
-                              type="button"
-                              onClick={() => {
-                                setSelectedCountry(country);
-                                setShowCountrySelect(false);
-                              }}
-                              className="flex items-center gap-3 w-full px-4 py-2 hover:bg-neutral-800 transition-colors"
-                            >
-                              <span className="text-lg">{country.flag}</span>
-                              <span className="text-sm text-neutral-400">{country.name}</span>
-                              <span className="text-xs text-neutral-500 ml-auto">+{country.dialCode}</span>
-                            </button>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-
-                    <input
-                      type="tel"
-                      value={whatsappNumber}
-                      onChange={(e) => setWhatsappNumber(formatWhatsApp(e.target.value))}
-                      placeholder={language === 'pt' ? '11999999999' : '11999999999'}
-                      className="flex-1 bg-black border border-l-0 border-neutral-800 rounded-r px-4 py-3 text-white focus:outline-none focus:border-green-500/50 text-center"
-                      maxLength={11}
-                      required
-                      disabled={isSubmitting}
-                    />
-                  </div>
-
-                  <div className="text-xs text-neutral-400 mt-2 text-center">
-                    {language === 'pt' 
-                      ? 'Digite apenas números (DDD + número)'
-                      : 'Enter numbers only (area code + number)'}
-                  </div>
-                </div>
-
-                {submitError && (
-                  <div className="text-red-400 text-sm text-center">
-                    {submitError}
-                  </div>
-                )}
-
-                <button
-                  type="submit"
-                  disabled={whatsappNumber.length < 11 || isSubmitting}
-                  className={`w-full px-6 py-3 rounded text-sm font-medium transition-colors ${
-                    whatsappNumber.length >= 11 && !isSubmitting
-                      ? 'bg-green-500 text-black hover:bg-green-400'
-                      : 'bg-neutral-800 text-neutral-400 cursor-not-allowed'
-                  }`}
-                >
-                  {isSubmitting 
-                    ? (language === 'pt' ? 'Liberando...' : 'Granting...')
-                    : (language === 'pt' ? 'Liberar Acesso' : 'Grant Access')}
-                </button>
-              </form>
-            </div>
-          </div>
-        </div>
-      )}
 
       <FloatingGroupButton />
     </div>
